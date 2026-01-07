@@ -85,7 +85,7 @@ def httpcall(url):
 	request.add_header('Host',host)
 	try:
 			urllib2.urlopen(request)
-	except urllib2.HTTPError, e:
+	except (urllib2.HTTPError, e):
 			#print e.code
 			set_flag(1)
 		    print("""

@@ -107,14 +107,14 @@ class HTTPThread(threading.Thread):
 				code=httpcall(url)
 				if (code==500) & (safe==1):
 					set_flag(2)
-		except Exception, ex:
+		except (Exception, ex):
 			pass
 
 class MonitorThread(threading.Thread):
 	def run(self):
 		previous=request_counter
 		while flag==0:
-			if (previous+500<request_counter) & (previous<>request_counter):
+			if  previous+500<request_counter & (previous<>request_counter):
 				print("\033[97m%d  ATTACK THE SERVER --> %" (request_counter)
 				previous=request_counter
 		if flag==2:

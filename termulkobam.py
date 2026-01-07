@@ -105,7 +105,7 @@ class HTTPThread(threading.Thread):
 				code=httpcall(url)
 				if (code==500) & (safe==1):
 					set_flag(2)
-		except Exception, ex:
+		except (Exception, ex):
 			pass
 
 # monitors http threads and counts requests

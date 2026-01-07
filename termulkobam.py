@@ -113,11 +113,11 @@ class MonitorThread(threading.Thread):
 	def run(self):
 		previous=request_counter
 		while flag==0:
-			if (previous+100<request_counter) & (previous<>request_counter):
-				print "%d Requests Sent" % (request_counter)
+			if (previous+100<request_counter) & (previous=request_counter):
+				print(f"%d Requests Sent" % (request_counter)
 				previous=request_counter
 		if flag==2:
-			print "\n-- iccont attackinished --"
+			print(f"\n-- iccont attackinished --")
 
 #execute 
 if len(sys.argv) < 2:
@@ -128,7 +128,7 @@ else:
 		usage()
 		sys.exit()
 	else:
-		print "-- HULK Attack Started --"
+		print("Sakaw Attack Started")
 		if len(sys.argv)== 3:
 			if sys.argv[2]=="safe":
 				set_safe()
